@@ -1,0 +1,193 @@
+{
+  "app_name": "Utility Dash",
+  "personality": "1 iOS-Native Clean",
+  "personality_one_liner": "A crisp, high-utility dashboard that feels native, snappy, and effortlessly organized using a warm, earthy palette.",
+  "color": {
+    "surface": "#F9F8F6",
+    "onSurface": "#1A1A1A",
+    "surfaceSecondary": "#FFFFFF",
+    "onSurfaceSecondary": "#1A1A1A",
+    "surfaceTertiary": "#EAE9E5",
+    "onSurfaceTertiary": "#4A4A4A",
+    "surfaceInverse": "#1A1A1A",
+    "onSurfaceInverse": "#F9F8F6",
+    "brand": "#E05D3A",
+    "brandPrimary": "#E05D3A",
+    "onBrandPrimary": "#FFFFFF",
+    "brandSecondary": "#F4A261",
+    "onBrandSecondary": "#1A1A1A",
+    "brandTertiary": "#FCECE7",
+    "onBrandTertiary": "#E05D3A",
+    "success": "#2A9D8F",
+    "onSuccess": "#FFFFFF",
+    "warning": "#E9C46A",
+    "onWarning": "#1A1A1A",
+    "error": "#E76F51",
+    "onError": "#FFFFFF",
+    "info": "#4A4A4A",
+    "onInfo": "#FFFFFF",
+    "border": "#EAE9E5",
+    "borderStrong": "#D1D0CC",
+    "divider": "#EAE9E5"
+  },
+  "dark_color": {
+    "surface": "#121212",
+    "onSurface": "#F0EFEA",
+    "surfaceSecondary": "#1E1E1E",
+    "onSurfaceSecondary": "#F0EFEA",
+    "surfaceTertiary": "#2C2C2C",
+    "onSurfaceTertiary": "#A3A3A0",
+    "surfaceInverse": "#F0EFEA",
+    "onSurfaceInverse": "#121212",
+    "brand": "#E87A5D",
+    "brandPrimary": "#E87A5D",
+    "onBrandPrimary": "#121212",
+    "brandSecondary": "#F4A261",
+    "onBrandSecondary": "#121212",
+    "brandTertiary": "#3A2119",
+    "onBrandTertiary": "#E87A5D",
+    "success": "#2A9D8F",
+    "onSuccess": "#121212",
+    "warning": "#E9C46A",
+    "onWarning": "#121212",
+    "error": "#E76F51",
+    "onError": "#121212",
+    "info": "#A3A3A0",
+    "onInfo": "#121212",
+    "border": "#2C2C2C",
+    "borderStrong": "#4A4A4A",
+    "divider": "#2C2C2C"
+  },
+  "typography": {
+    "displayFontFamily": "Plus Jakarta Sans",
+    "textFontFamily": "Plus Jakarta Sans",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Generous padding around content to allow breathing room. Ensure hit targets are 44x44. Use md/lg gaps between cards.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": "1",
+  "navigation": "drawer_wrapping_bottom_tabs",
+  "icon_set": "Phosphor",
+  "glassmorphism": {
+    "enabled": true,
+    "do's": [
+      "Apply to sticky header with bell and 3-dot menu over scrolling content.",
+      "Apply to the bottom tab bar.",
+      "Apply over hero featured cards when paired with imagery underneath."
+    ],
+    "dont's": [
+      "Never blur body content.",
+      "Never blur list rows or form inputs."
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-glass-effect",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Navigation Structure",
+      "purpose": "Provides the structural shell with top header, side drawer, and bottom tabs.",
+      "states": {
+        "loading": "Skeleton overlay of header and tabs.",
+        "empty": "Not applicable to shell.",
+        "error": "Not applicable to shell."
+      },
+      "layout": "The root is a Drawer Navigator. The Drawer contains Account Settings, Billing, Integrations, Help & Support, and Sign Out. Inside the Drawer sits the Bottom Tab Navigator (Home, Tasks, Analytics, Profile). The Header is globally configured to display a hamburger icon on the left (to open the Drawer), a Title in the center, and a bell icon (with a red notification badge) plus a 3-dot vertical menu icon on the right (which opens a popup with Refresh, Share, Settings). The bottom tabs must remain fixed when navigating through the main tab views."
+    },
+    {
+      "name": "Home (Dashboard Tab)",
+      "purpose": "Primary landing tab showcasing key metrics, recent activities, and a featured highlight.",
+      "states": {
+        "loading": "Skeleton cards mimicking the layout hierarchy.",
+        "empty": "An empty room illustration indicating no current data or activities to show.",
+        "error": "A clean error message card with a retry button using the warning accent."
+      },
+      "layout": "Vertical scroll. Top section: A Hero feature card with an abstract geometric background, overlaid with a vertical gradient scrim (transparent to surfaceInverse) and white text at the bottom. Below the hero: A 2-column grid of metric cards (e.g., Active Tasks, Pending Reviews). Below that: A 'Recent Activity' list with tinted icon containers for each row."
+    },
+    {
+      "name": "Tasks Tab",
+      "purpose": "A list view of actionable items.",
+      "states": {
+        "loading": "List item skeletons.",
+        "empty": "Empty state illustration centered, with 'No pending tasks' and a primary action button.",
+        "error": "Error card with a retry action."
+      },
+      "layout": "A stacked list of task cards with generous vertical spacing (md gap). Each card has a title, subtitle, and an action chevron. Content scrolls behind the top header and bottom tabs, taking advantage of glassmorphism on elevated surfaces."
+    },
+    {
+      "name": "Analytics Tab",
+      "purpose": "Visual representation of data over time.",
+      "states": {
+        "loading": "Skeleton placeholders for charts.",
+        "empty": "Empty state illustration stating 'Not enough data yet'.",
+        "error": "Failed to load chart data error view."
+      },
+      "layout": "Vertical stack of large, full-width cards containing summary stats and chart placeholders."
+    },
+    {
+      "name": "Profile Tab",
+      "purpose": "User specific details and account summary.",
+      "states": {
+        "loading": "Skeleton layout for avatar and text.",
+        "empty": "N/A",
+        "error": "Error loading user profile."
+      },
+      "layout": "Top section features the user avatar (circular, large) centered over a subtle tinted background, followed by a list of settings rows. Each row has a leading icon inside a tinted brandTertiary square container."
+    }
+  ],
+  "images": {
+    "user_avatar": {
+      "url": "https://images.pexels.com/photos/35129368/pexels-photo-35129368.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Professional young man with a beard wearing a vest."
+    },
+    "hero_background": {
+      "url": "https://images.pexels.com/photos/24777986/pexels-photo-24777986.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "dark": "https://images.pexels.com/photos/12198534/pexels-photo-12198534.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Abstract clean geometric 3d shapes."
+    },
+    "empty_state_room": {
+      "url": "https://images.unsplash.com/photo-1517816743773-6e0fd518b4a6?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwxfHxjbGVhbiUyMGVtcHR5JTIwcm9vbSUyMG1pbmltYWwlMjBhcmNoaXRlY3R1cmUlMjB3aGl0ZXxlbnwwfHx8fDE3ODIyMTg3MzB8MA&ixlib=rb-4.1.0&q=85",
+      "dark": "https://images.pexels.com/photos/18150695/pexels-photo-18150695.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Minimal empty architectural space."
+    }
+  },
+  "instructions_to_main_agent": [
+    "Strictly follow the color palette provided in this JSON. All blue and purple hues are heavily banned (including indigo, navy, cyan). Use the provided Terracotta/Warm Sand palette for both Light and Dark themes.",
+    "The navigation architecture must be a Drawer Navigator wrapping a Bottom Tab Navigator so that the bottom tabs persist on the screen while the user navigates between the main tabs.",
+    "The Header (App Bar) should be globally configured across the tabs to include a left hamburger icon, a center title, and right icons (Bell with a red notification count badge, followed by a 3-dot vertical menu icon).",
+    "On click of the 3-dot menu, display a clean popup/dropdown menu (e.g., Refresh, Share, Settings) anchored to the icon.",
+    "Implement the 'iOS-Native Clean' style: generous spacing (lg/xl padding), clean Plus Jakarta Sans typography, and subtle shadows (tier 1).",
+    "Apply Glassmorphism securely on the bottom tab bar and the top sticky header when content scrolls behind them.",
+    "For the hero card on the Home Tab, make sure to layer the 'hero_background' image with a top-to-bottom linear gradient scrim (transparent to surfaceInverse) to guarantee text readability.",
+    "Use Phosphor icons consistently at weights that match the clean native iOS feel (regular or thin outlines, swapping to filled only for the active state in the bottom tabs)."
+  ]
+}
