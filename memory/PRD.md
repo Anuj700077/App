@@ -1,39 +1,43 @@
-# Utility Dash – UI Layout MVP
+# Marine – UI Layout MVP
 
-## Scope (current iteration)
-Static UI shell only. No backend, no auth, no persistence.
+## Flow
+Splash (auto 1.6s) → Login → Main shell
 
-## Navigation Architecture
-- Custom slide-in **Left Drawer** (animated, scrim overlay).
-- **Top header** (sticky, safe-area aware) with:
-  - Left: hamburger menu icon → opens drawer
-  - Center: dynamic title (matches active tab)
-  - Right: bell icon with red notification badge (currently "3") + 3-dot overflow icon
-- **3-dot popup menu** (Modal-based, anchored top-right): Refresh, Share, Settings
-- **Bottom tab bar** with 4 tabs: Home, Tasks, Analytics, Profile
+## Auth screens (static, no real backend)
+- `/login` — email, OTP, password, forgot-password link, signup link, theme toggle button
+- `/signup` — email, OTP, password, back-to-login link
+- `/forgot-password` — email only, sends a (mock) reset link
 
-## Tabs / Screens
-1. **Home** – hero card, 2-column metric cards, recent activity list
-2. **Tasks** – stacked task cards with checkbox + chevron
-3. **Analytics** – stat cards with chart placeholder block
-4. **Profile** – large avatar header + settings rows
+## Main shell (`/main`)
+- Top header: hamburger | dynamic tab title | theme-toggle | bell + badge | 3-dot overflow
+- Left drawer (slide-in): Account Settings, Billing, Integrations, Help & Support, Dark/Light Mode toggle, Sign Out
+- Right notification panel (slide-in from right): 4 notification rows, "Mark all read"
+- 3-dot popup: Refresh, Share, Settings
+- Bottom tabs: Home, Tasks, Analytics, Profile
 
-## Drawer items
-Account Settings, Billing, Integrations, Help & Support, Sign Out
+## Sub-pages
+- `/account-settings` — name/email/phone/password/2FA rows + avatar
+- `/billing` — Marine Pro plan card, payment method, invoice history
+- `/integrations` — Slack/GitHub/Google Calendar/Drive/Zapier with toggles
+- `/help-support` — Live chat / Email / Docs + FAQ list
+- `/profile-edit` — editable name, email, phone, bio + change-photo
+- `/preferences` — theme toggle + push/email/sound/haptics switches
+- `/privacy` — analytics/personalization/marketing/online-status switches + blocked/data/delete-account actions
+- `/about` — app logo, version, links to terms/privacy/licenses/rate/share
 
-## Theming
-- Light + Dark themes via `useColorScheme()`
-- Warm Terracotta brand palette (`#E05D3A` / `#E87A5D` dark)
-- Plus Jakarta-style typography scale, 8pt spacing grid
+## Theme
+- Marine sky-blue palette (`#0288D1` brand light / `#4FC3F7` brand dark)
+- Light + Dark both supported via React Context (`ThemeProvider`)
+- Toggle accessible from: header icon, drawer row, Preferences screen, login screen
 
 ## Tech
-- Expo SDK 54 + expo-router
+- Expo Router (file-based routes)
+- React Context for theme
+- React Native `Animated` for drawer + right notif panel
 - `@expo/vector-icons` Ionicons
 - `react-native-safe-area-context`
-- React Native `Animated` for drawer slide
 
-## Out of scope (for future iterations)
-- Backend API + persistence
-- Real notifications, real tasks/analytics data
-- Authentication
-- Settings persistence (theme toggle, etc.)
+## Out of scope (future)
+- Real auth + OTP delivery
+- Real backend (tasks, analytics, notifications, billing)
+- Theme persistence across reloads (uses in-memory state)
