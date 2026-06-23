@@ -26,7 +26,7 @@ const { width: SCREEN_W } = Dimensions.get("window");
 const DRAWER_WIDTH = Math.min(300, SCREEN_W * 0.82);
 const NOTIF_WIDTH = Math.min(340, SCREEN_W * 0.88);
 
-type TabKey = "home" | "tasks" | "analytics" | "profile";
+type TabKey = "dashboard" | "vms" | "capa" | "chat";
 type IoniconName = React.ComponentProps<typeof Ionicons>["name"];
 
 const TABS: {
@@ -35,10 +35,10 @@ const TABS: {
   icon: IoniconName;
   iconActive: IoniconName;
 }[] = [
-  { key: "home", label: "Home", icon: "home-outline", iconActive: "home" },
-  { key: "tasks", label: "Tasks", icon: "checkbox-outline", iconActive: "checkbox" },
-  { key: "analytics", label: "Analytics", icon: "stats-chart-outline", iconActive: "stats-chart" },
-  { key: "profile", label: "Profile", icon: "person-outline", iconActive: "person" },
+  { key: "dashboard", label: "Dashboard", icon: "grid-outline", iconActive: "grid" },
+  { key: "vms", label: "VMS", icon: "boat-outline", iconActive: "boat" },
+  { key: "capa", label: "CAPA", icon: "shield-checkmark-outline", iconActive: "shield-checkmark" },
+  { key: "chat", label: "Chat", icon: "chatbubbles-outline", iconActive: "chatbubbles" },
 ];
 
 const DRAWER_ITEMS: {
@@ -53,11 +53,31 @@ const DRAWER_ITEMS: {
   { key: "help", label: "Help & Support", icon: "help-circle-outline", route: "/help-support" },
 ];
 
-const OVERFLOW_ITEMS: { key: string; label: string; icon: IoniconName }[] = [
-  { key: "refresh", label: "Refresh", icon: "refresh-outline" },
-  { key: "share", label: "Share", icon: "share-outline" },
-  { key: "settings", label: "Settings", icon: "settings-outline" },
-];
+/* Per-tab overflow menu items */
+const OVERFLOW_BY_TAB: Record<TabKey, { key: string; label: string; icon: IoniconName }[]> = {
+  dashboard: [
+    { key: "refresh", label: "Refresh", icon: "refresh-outline" },
+    { key: "customize", label: "Customize widgets", icon: "color-palette-outline" },
+    { key: "export", label: "Export summary", icon: "download-outline" },
+  ],
+  vms: [
+    { key: "new", label: "New entry", icon: "add-circle-outline" },
+    { key: "filter", label: "Filter groups", icon: "funnel-outline" },
+    { key: "sync", label: "Sync now", icon: "sync-outline" },
+    { key: "settings", label: "VMS settings", icon: "settings-outline" },
+  ],
+  capa: [
+    { key: "new", label: "New CAPA", icon: "add-circle-outline" },
+    { key: "filter", label: "Filter status", icon: "funnel-outline" },
+    { key: "export", label: "Export report", icon: "document-text-outline" },
+  ],
+  chat: [
+    { key: "newchat", label: "New chat", icon: "create-outline" },
+    { key: "starred", label: "Starred", icon: "star-outline" },
+    { key: "archived", label: "Archived", icon: "archive-outline" },
+    { key: "settings", label: "Chat settings", icon: "settings-outline" },
+  ],
+};
 
 const NOTIFICATIONS: {
   key: string;
@@ -67,46 +87,58 @@ const NOTIFICATIONS: {
   icon: IoniconName;
   unread: boolean;
 }[] = [
-  {
-    key: "1",
-    title: "New comment on Q2 Report",
-    body: "Marie left feedback on your shared document.",
-    time: "2m ago",
-    icon: "chatbubble-outline",
-    unread: true,
-  },
-  {
-    key: "2",
-    title: "Invoice paid",
-    body: "Acme Co. paid invoice #1042 for $1,240.",
-    time: "1h ago",
-    icon: "card-outline",
-    unread: true,
-  },
-  {
-    key: "3",
-    title: "Marie joined your team",
-    body: "Welcome them aboard in #general.",
-    time: "Yesterday",
-    icon: "person-add-outline",
-    unread: true,
-  },
-  {
-    key: "4",
-    title: "Weekly summary ready",
-    body: "Your weekly analytics digest is ready to view.",
-    time: "2d ago",
-    icon: "stats-chart-outline",
-    unread: false,
-  },
+  { key: "1", title: "New comment on Q2 Report", body: "Marie left feedback on your shared document.", time: "2m ago", icon: "chatbubble-outline", unread: true },
+  { key: "2", title: "Invoice paid", body: "Acme Co. paid invoice #1042 for $1,240.", time: "1h ago", icon: "card-outline", unread: true },
+  { key: "3", title: "Marie joined your team", body: "Welcome them aboard in #general.", time: "Yesterday", icon: "person-add-outline", unread: true },
+  { key: "4", title: "Weekly summary ready", body: "Your weekly analytics digest is ready to view.", time: "2d ago", icon: "stats-chart-outline", unread: false },
 ];
 
 const TAB_TITLES: Record<TabKey, string> = {
-  home: "Home",
-  tasks: "Tasks",
-  analytics: "Analytics",
-  profile: "Profile",
+  dashboard: "Dashboard",
+  vms: "VMS",
+  capa: "CAPA",
+  chat: "Chat",
 };
+
+/* ------------------------------------------------------------------ */
+/* VMS groups                                                         */
+/* ------------------------------------------------------------------ */
+
+type VmsButton = { key: string; label: string; icon: IoniconName; route: string };
+type VmsGroup = { key: string; label: string; icon: IoniconName; buttons: VmsButton[] };
+
+const VMS_GROUPS: VmsGroup[] = [
+  {
+    key: "reports",
+    label: "Reports",
+    icon: "document-text-outline",
+    buttons: [
+      { key: "noon-report", label: "Noon Report", icon: "time-outline", route: "/vms-noon-report" },
+      { key: "rest-hour", label: "Rest Hour", icon: "bed-outline", route: "/vms-rest-hour" },
+      { key: "events", label: "Events", icon: "calendar-outline", route: "/vms-events" },
+      { key: "forms", label: "Forms", icon: "reader-outline", route: "/vms-forms" },
+    ],
+  },
+  {
+    key: "pms",
+    label: "PMS",
+    icon: "construct-outline",
+    buttons: [
+      { key: "updated-jobs", label: "Updated Jobs", icon: "hammer-outline", route: "/vms-updated-jobs" },
+      { key: "defect-report", label: "Defect Report", icon: "warning-outline", route: "/vms-defect-report" },
+    ],
+  },
+  {
+    key: "hsseq",
+    label: "HSSEQ",
+    icon: "shield-checkmark-outline",
+    buttons: [
+      { key: "drills", label: "Drills", icon: "fitness-outline", route: "/vms-drills" },
+      { key: "ra", label: "RA", icon: "alert-circle-outline", route: "/vms-ra" },
+      { key: "ptw", label: "PTW", icon: "clipboard-outline", route: "/vms-ptw" },
+    ],
+  },
+];
 
 /* ------------------------------------------------------------------ */
 /* Main shell                                                         */
@@ -117,7 +149,7 @@ export default function Main() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = useState<TabKey>("home");
+  const [activeTab, setActiveTab] = useState<TabKey>("dashboard");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [overflowOpen, setOverflowOpen] = useState(false);
@@ -152,7 +184,6 @@ export default function Main() {
     inputRange: [0, 1],
     outputRange: [0, 1],
   });
-
   const notifTranslate = notifAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [NOTIF_WIDTH, 0],
@@ -180,17 +211,14 @@ export default function Main() {
     setTimeout(() => router.replace("/login"), 120);
   }, [router]);
 
-  const onProfileRow = useCallback(
-    (route: string) => {
-      router.push(route as never);
-    },
+  const onVmsButton = useCallback(
+    (route: string) => router.push(route as never),
     [router],
   );
 
-  const markAllRead = useCallback(() => {
-    setNotifCount(0);
-  }, []);
+  const markAllRead = useCallback(() => setNotifCount(0), []);
 
+  const overflowItems = OVERFLOW_BY_TAB[activeTab];
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   return (
@@ -235,11 +263,7 @@ export default function Main() {
             hitSlop={8}
             testID="header-bell-button"
           >
-            <Ionicons
-              name="notifications-outline"
-              size={24}
-              color={theme.onSurface}
-            />
+            <Ionicons name="notifications-outline" size={24} color={theme.onSurface} />
             {notifCount > 0 && (
               <View style={styles.badge} testID="header-bell-badge">
                 <Text style={styles.badgeText}>
@@ -262,20 +286,15 @@ export default function Main() {
 
       {/* Content */}
       <View style={styles.content} testID="tab-content">
-        {activeTab === "home" && <HomeScreen theme={theme} />}
-        {activeTab === "tasks" && <TasksScreen theme={theme} />}
-        {activeTab === "analytics" && <AnalyticsScreen theme={theme} />}
-        {activeTab === "profile" && (
-          <ProfileScreen theme={theme} onRow={onProfileRow} />
-        )}
+        {activeTab === "dashboard" && <DashboardScreen theme={theme} />}
+        {activeTab === "vms" && <VmsScreen theme={theme} onButton={onVmsButton} />}
+        {activeTab === "capa" && <CapaScreen theme={theme} />}
+        {activeTab === "chat" && <ChatScreen theme={theme} />}
       </View>
 
       {/* Bottom Tabs */}
       <View
-        style={[
-          styles.tabBar,
-          { paddingBottom: Math.max(insets.bottom, SPACING.sm) },
-        ]}
+        style={[styles.tabBar, { paddingBottom: Math.max(insets.bottom, SPACING.sm) }]}
         testID="bottom-tabs"
       >
         {TABS.map((t) => {
@@ -371,24 +390,14 @@ export default function Main() {
       >
         <View style={styles.notifHeader}>
           <Text style={styles.notifHeaderTitle}>Notifications</Text>
-          <Pressable
-            onPress={markAllRead}
-            hitSlop={6}
-            testID="notif-mark-all-read"
-          >
-            <Text style={[styles.link, { color: theme.brand }]}>
-              Mark all read
-            </Text>
+          <Pressable onPress={markAllRead} hitSlop={6} testID="notif-mark-all-read">
+            <Text style={[styles.link, { color: theme.brand }]}>Mark all read</Text>
           </Pressable>
         </View>
 
         <ScrollView contentContainerStyle={{ paddingVertical: SPACING.sm }}>
           {NOTIFICATIONS.map((n) => (
-            <View
-              key={n.key}
-              style={styles.notifRow}
-              testID={`notif-item-${n.key}`}
-            >
+            <View key={n.key} style={styles.notifRow} testID={`notif-item-${n.key}`}>
               <View
                 style={[
                   styles.notifIconBox,
@@ -403,9 +412,7 @@ export default function Main() {
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.notifTitle}>{n.title}</Text>
-                <Text style={styles.notifBody} numberOfLines={2}>
-                  {n.body}
-                </Text>
+                <Text style={styles.notifBody} numberOfLines={2}>{n.body}</Text>
                 <Text style={styles.notifTime}>{n.time}</Text>
               </View>
               {n.unread && notifCount > 0 && <View style={styles.unreadDot} />}
@@ -414,7 +421,7 @@ export default function Main() {
         </ScrollView>
       </Animated.View>
 
-      {/* Overflow popup */}
+      {/* Per-tab overflow popup */}
       <Modal
         visible={overflowOpen}
         transparent
@@ -428,18 +435,18 @@ export default function Main() {
         >
           <View
             style={[styles.overflowCard, { top: insets.top + 56 }]}
-            testID="overflow-menu"
+            testID={`overflow-menu-${activeTab}`}
           >
-            {OVERFLOW_ITEMS.map((item, idx) => (
+            {overflowItems.map((item, idx) => (
               <Pressable
                 key={item.key}
                 onPress={() => setOverflowOpen(false)}
                 style={({ pressed }) => [
                   styles.overflowRow,
                   pressed && { backgroundColor: theme.surfaceTertiary },
-                  idx === OVERFLOW_ITEMS.length - 1 && { borderBottomWidth: 0 },
+                  idx === overflowItems.length - 1 && { borderBottomWidth: 0 },
                 ]}
-                testID={`overflow-item-${item.key}`}
+                testID={`overflow-item-${activeTab}-${item.key}`}
               >
                 <Ionicons name={item.icon} size={18} color={theme.onSurface} />
                 <Text style={styles.overflowText}>{item.label}</Text>
@@ -472,7 +479,11 @@ function DrawerContent({
   const styles = makeStyles(theme);
   return (
     <View style={styles.drawerInner}>
-      <View style={styles.drawerHeader} testID="drawer-header">
+      <Pressable
+        onPress={() => onItem("/profile-edit")}
+        style={styles.drawerHeader}
+        testID="drawer-header"
+      >
         <View style={styles.avatarRing}>
           <Image
             source={{
@@ -482,14 +493,11 @@ function DrawerContent({
           />
         </View>
         <View style={{ marginLeft: SPACING.md, flex: 1 }}>
-          <Text style={styles.drawerName} numberOfLines={1}>
-            Alex Morgan
-          </Text>
-          <Text style={styles.drawerEmail} numberOfLines={1}>
-            alex.morgan@example.com
-          </Text>
+          <Text style={styles.drawerName} numberOfLines={1}>Alex Morgan</Text>
+          <Text style={styles.drawerEmail} numberOfLines={1}>alex.morgan@example.com</Text>
         </View>
-      </View>
+        <Ionicons name="chevron-forward" size={18} color={theme.muted} />
+      </Pressable>
 
       <View style={styles.divider} />
 
@@ -508,12 +516,7 @@ function DrawerContent({
               <Ionicons name={item.icon} size={20} color={theme.brand} />
             </View>
             <Text style={styles.drawerRowLabel}>{item.label}</Text>
-            <Ionicons
-              name="chevron-forward"
-              size={18}
-              color={theme.muted}
-              style={{ marginLeft: "auto" }}
-            />
+            <Ionicons name="chevron-forward" size={18} color={theme.muted} style={{ marginLeft: "auto" }} />
           </Pressable>
         ))}
 
@@ -545,14 +548,10 @@ function DrawerContent({
           ]}
           testID="drawer-item-signout"
         >
-          <View
-            style={[styles.drawerIconBox, { backgroundColor: "rgba(231,111,81,0.15)" }]}
-          >
+          <View style={[styles.drawerIconBox, { backgroundColor: "rgba(231,111,81,0.15)" }]}>
             <Ionicons name="log-out-outline" size={20} color={theme.error} />
           </View>
-          <Text style={[styles.drawerRowLabel, { color: theme.error }]}>
-            Sign Out
-          </Text>
+          <Text style={[styles.drawerRowLabel, { color: theme.error }]}>Sign Out</Text>
         </Pressable>
       </ScrollView>
 
@@ -566,38 +565,38 @@ function DrawerContent({
 /* Tab Screens                                                        */
 /* ------------------------------------------------------------------ */
 
-function HomeScreen({ theme }: { theme: Theme }) {
+function DashboardScreen({ theme }: { theme: Theme }) {
   const styles = makeStyles(theme);
   return (
     <ScrollView
       contentContainerStyle={styles.screenScroll}
       showsVerticalScrollIndicator={false}
-      testID="home-screen"
+      testID="dashboard-screen"
     >
       <View style={styles.heroCard}>
         <Text style={styles.heroEyebrow}>Welcome back</Text>
         <Text style={styles.heroTitle}>Smooth sailing today</Text>
         <Text style={styles.heroSubtitle}>
-          You have 3 tasks pending and 2 new updates.
+          3 reports due, 2 CAPAs open, 4 new chat messages.
         </Text>
       </View>
 
       <View style={styles.metricsRow}>
         <View style={[styles.metricCard, { marginRight: SPACING.md }]}>
-          <Text style={styles.metricLabel}>Active Tasks</Text>
-          <Text style={styles.metricValue}>12</Text>
+          <Text style={styles.metricLabel}>Open CAPA</Text>
+          <Text style={styles.metricValue}>7</Text>
         </View>
         <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>Reviews</Text>
-          <Text style={styles.metricValue}>4</Text>
+          <Text style={styles.metricLabel}>VMS Drafts</Text>
+          <Text style={styles.metricValue}>3</Text>
         </View>
       </View>
 
       <Text style={styles.sectionTitle}>Recent Activity</Text>
       {[
-        { t: "New comment on Report Q2", s: "2 min ago", icon: "chatbubble-outline" as IoniconName },
-        { t: "Invoice #1042 paid", s: "1 hr ago", icon: "card-outline" as IoniconName },
-        { t: "Marie joined your team", s: "Yesterday", icon: "person-add-outline" as IoniconName },
+        { t: "Noon Report submitted", s: "2 min ago", icon: "time-outline" as IoniconName },
+        { t: "Defect Report #18 closed", s: "1 hr ago", icon: "warning-outline" as IoniconName },
+        { t: "Fire Drill scheduled", s: "Yesterday", icon: "fitness-outline" as IoniconName },
       ].map((row, i) => (
         <View key={i} style={styles.listRow}>
           <View style={styles.listIconBox}>
@@ -613,113 +612,131 @@ function HomeScreen({ theme }: { theme: Theme }) {
   );
 }
 
-function TasksScreen({ theme }: { theme: Theme }) {
+function VmsScreen({
+  theme,
+  onButton,
+}: {
+  theme: Theme;
+  onButton: (route: string) => void;
+}) {
   const styles = makeStyles(theme);
-  const tasks = [
-    { t: "Review design handoff", s: "Due today" },
-    { t: "Send invoice to Acme Co.", s: "Due tomorrow" },
-    { t: "Sync with engineering", s: "This week" },
-    { t: "Update onboarding copy", s: "This week" },
-  ];
   return (
     <ScrollView
       contentContainerStyle={styles.screenScroll}
       showsVerticalScrollIndicator={false}
-      testID="tasks-screen"
+      testID="vms-screen"
     >
-      <Text style={styles.sectionTitle}>Your Tasks</Text>
-      {tasks.map((row, i) => (
-        <View key={i} style={styles.taskCard}>
-          <View style={styles.checkbox} />
+      {VMS_GROUPS.map((g) => (
+        <View key={g.key} style={styles.vmsGroup} testID={`vms-group-${g.key}`}>
+          <View style={styles.vmsGroupHeader}>
+            <View style={[styles.vmsGroupIcon, { backgroundColor: theme.brandTertiary }]}>
+              <Ionicons name={g.icon} size={16} color={theme.brand} />
+            </View>
+            <Text style={styles.vmsGroupTitle}>{g.label}</Text>
+          </View>
+          <View style={styles.vmsGrid}>
+            {g.buttons.map((b) => (
+              <Pressable
+                key={b.key}
+                onPress={() => onButton(b.route)}
+                style={({ pressed }) => [
+                  styles.vmsTile,
+                  pressed && { backgroundColor: theme.surfaceTertiary },
+                ]}
+                testID={`vms-button-${b.key}`}
+              >
+                <View style={[styles.vmsTileIcon, { backgroundColor: theme.brandTertiary }]}>
+                  <Ionicons name={b.icon} size={22} color={theme.brand} />
+                </View>
+                <Text style={styles.vmsTileLabel} numberOfLines={2}>{b.label}</Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      ))}
+    </ScrollView>
+  );
+}
+
+function CapaScreen({ theme }: { theme: Theme }) {
+  const styles = makeStyles(theme);
+  const items = [
+    { t: "CAPA-2026-018", s: "Open • Engine Room", sev: "High" },
+    { t: "CAPA-2026-017", s: "In review • Deck", sev: "Medium" },
+    { t: "CAPA-2026-016", s: "Closed • Bridge", sev: "Low" },
+    { t: "CAPA-2026-015", s: "Open • Galley", sev: "Medium" },
+  ];
+  const sevColor = (s: string) =>
+    s === "High" ? theme.error : s === "Medium" ? theme.warning : theme.success;
+  return (
+    <ScrollView
+      contentContainerStyle={styles.screenScroll}
+      showsVerticalScrollIndicator={false}
+      testID="capa-screen"
+    >
+      <Text style={styles.sectionTitle}>Corrective & Preventive Actions</Text>
+      {items.map((row, i) => (
+        <View key={i} style={styles.listRow}>
+          <View style={styles.listIconBox}>
+            <Ionicons name="shield-checkmark-outline" size={18} color={theme.brand} />
+          </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.listTitle}>{row.t}</Text>
             <Text style={styles.listSubtitle}>{row.s}</Text>
           </View>
-          <Ionicons name="chevron-forward" size={18} color={theme.muted} />
+          <View
+            style={{
+              paddingHorizontal: SPACING.sm,
+              paddingVertical: 2,
+              borderRadius: RADIUS.pill,
+              backgroundColor: sevColor(row.sev) + "22",
+            }}
+          >
+            <Text style={{ color: sevColor(row.sev), fontSize: 11, fontWeight: "700" }}>
+              {row.sev}
+            </Text>
+          </View>
         </View>
       ))}
     </ScrollView>
   );
 }
 
-function AnalyticsScreen({ theme }: { theme: Theme }) {
+function ChatScreen({ theme }: { theme: Theme }) {
   const styles = makeStyles(theme);
-  return (
-    <ScrollView
-      contentContainerStyle={styles.screenScroll}
-      showsVerticalScrollIndicator={false}
-      testID="analytics-screen"
-    >
-      <Text style={styles.sectionTitle}>Overview</Text>
-      {[
-        { l: "Revenue", v: "$12,480", d: "+8.2%" },
-        { l: "Active Users", v: "1,284", d: "+3.1%" },
-      ].map((m, i) => (
-        <View key={i} style={styles.analyticsCard}>
-          <Text style={styles.metricLabel}>{m.l}</Text>
-          <Text style={styles.analyticsValue}>{m.v}</Text>
-          <Text style={styles.analyticsDelta}>{m.d} this week</Text>
-          <View style={styles.chartPlaceholder} />
-        </View>
-      ))}
-    </ScrollView>
-  );
-}
-
-function ProfileScreen({
-  theme,
-  onRow,
-}: {
-  theme: Theme;
-  onRow: (route: string) => void;
-}) {
-  const styles = makeStyles(theme);
-  const rows: { key: string; label: string; icon: IoniconName; route: string }[] = [
-    { key: "edit", label: "Edit Profile", icon: "create-outline", route: "/profile-edit" },
-    { key: "prefs", label: "Preferences", icon: "options-outline", route: "/preferences" },
-    { key: "privacy", label: "Privacy", icon: "lock-closed-outline", route: "/privacy" },
-    { key: "about", label: "About", icon: "information-circle-outline", route: "/about" },
+  const chats = [
+    { n: "Bridge Watch", m: "Course 045, all clear.", t: "2m", u: 2 },
+    { n: "Capt. Singh", m: "Noon report attached.", t: "10m", u: 0 },
+    { n: "Engine Room", m: "Aux #2 maintenance done.", t: "1h", u: 1 },
+    { n: "Office HSEQ", m: "Drill log received, thanks.", t: "Yesterday", u: 0 },
+    { n: "Galley", m: "Provision order confirmed.", t: "2d", u: 0 },
   ];
   return (
     <ScrollView
       contentContainerStyle={styles.screenScroll}
       showsVerticalScrollIndicator={false}
-      testID="profile-screen"
+      testID="chat-screen"
     >
-      <View style={styles.profileHeader}>
-        <View style={styles.avatarRingLg}>
-          <Image
-            source={{
-              uri: "https://images.pexels.com/photos/35129368/pexels-photo-35129368.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-            }}
-            style={styles.avatarLg}
-          />
-        </View>
-        <Text style={styles.profileName}>Alex Morgan</Text>
-        <Text style={styles.profileEmail}>alex.morgan@example.com</Text>
-      </View>
-
-      {rows.map((r) => (
-        <Pressable
-          key={r.key}
-          onPress={() => onRow(r.route)}
-          style={({ pressed }) => [
-            styles.profileRow,
-            pressed && { backgroundColor: theme.surfaceTertiary },
-          ]}
-          testID={`profile-row-${r.key}`}
-        >
-          <View style={styles.listIconBox}>
-            <Ionicons name={r.icon} size={18} color={theme.brand} />
+      {chats.map((c, i) => (
+        <View key={i} style={styles.chatRow}>
+          <View style={styles.chatAvatar}>
+            <Ionicons name="person-outline" size={20} color={theme.brand} />
           </View>
-          <Text style={styles.listTitle}>{r.label}</Text>
-          <Ionicons
-            name="chevron-forward"
-            size={18}
-            color={theme.muted}
-            style={{ marginLeft: "auto" }}
-          />
-        </Pressable>
+          <View style={{ flex: 1 }}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+              <Text style={styles.listTitle}>{c.n}</Text>
+              <Text style={[styles.listSubtitle, { marginTop: 0 }]}>{c.t}</Text>
+            </View>
+            <View style={{ flexDirection: "row", alignItems: "center", marginTop: 2 }}>
+              <Text style={[styles.listSubtitle, { flex: 1 }]} numberOfLines={1}>{c.m}</Text>
+              {c.u > 0 && (
+                <View style={styles.chatBadge}>
+                  <Text style={styles.chatBadgeText}>{c.u}</Text>
+                </View>
+              )}
+            </View>
+          </View>
+        </View>
       ))}
     </ScrollView>
   );
@@ -752,32 +769,18 @@ function makeStyles(theme: Theme) {
     },
     headerRight: { flexDirection: "row", alignItems: "center" },
     iconBtn: {
-      width: 44,
-      height: 44,
-      borderRadius: RADIUS.pill,
-      alignItems: "center",
-      justifyContent: "center",
+      width: 44, height: 44, borderRadius: RADIUS.pill,
+      alignItems: "center", justifyContent: "center",
     },
     badge: {
-      position: "absolute",
-      top: 6,
-      right: 4,
-      minWidth: 18,
-      height: 18,
-      borderRadius: 9,
+      position: "absolute", top: 6, right: 4,
+      minWidth: 18, height: 18, borderRadius: 9,
       backgroundColor: theme.error,
       paddingHorizontal: 4,
-      alignItems: "center",
-      justifyContent: "center",
-      borderWidth: 2,
-      borderColor: theme.surface,
+      alignItems: "center", justifyContent: "center",
+      borderWidth: 2, borderColor: theme.surface,
     },
-    badgeText: {
-      color: "#FFFFFF",
-      fontSize: 10,
-      fontWeight: "700",
-      lineHeight: 12,
-    },
+    badgeText: { color: "#FFFFFF", fontSize: 10, fontWeight: "700", lineHeight: 12 },
 
     tabBar: {
       flexDirection: "row",
@@ -786,24 +789,13 @@ function makeStyles(theme: Theme) {
       borderTopColor: theme.divider,
       paddingTop: SPACING.sm,
     },
-    tabItem: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      paddingVertical: SPACING.xs,
-    },
+    tabItem: { flex: 1, alignItems: "center", justifyContent: "center", paddingVertical: SPACING.xs },
     tabLabel: { fontSize: 11, marginTop: 2 },
 
-    scrim: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: theme.scrim,
-    },
+    scrim: { ...StyleSheet.absoluteFillObject, backgroundColor: theme.scrim },
 
     drawer: {
-      position: "absolute",
-      top: 0,
-      bottom: 0,
-      left: 0,
+      position: "absolute", top: 0, bottom: 0, left: 0,
       backgroundColor: theme.surfaceSecondary,
       shadowColor: "#000",
       shadowOffset: { width: 2, height: 0 },
@@ -819,51 +811,29 @@ function makeStyles(theme: Theme) {
       paddingBottom: SPACING.lg,
     },
     avatarRing: {
-      width: 52,
-      height: 52,
-      borderRadius: 26,
+      width: 52, height: 52, borderRadius: 26,
       backgroundColor: theme.brandTertiary,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: "center", justifyContent: "center",
     },
     avatar: { width: 46, height: 46, borderRadius: 23 },
     drawerName: { fontSize: 16, fontWeight: "600", color: theme.onSurface },
     drawerEmail: { fontSize: 12, color: theme.muted, marginTop: 2 },
-    divider: {
-      height: StyleSheet.hairlineWidth,
-      backgroundColor: theme.divider,
-      marginVertical: SPACING.sm,
-    },
+    divider: { height: StyleSheet.hairlineWidth, backgroundColor: theme.divider, marginVertical: SPACING.sm },
     drawerRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingVertical: SPACING.md,
-      paddingHorizontal: SPACING.sm,
+      flexDirection: "row", alignItems: "center",
+      paddingVertical: SPACING.md, paddingHorizontal: SPACING.sm,
       borderRadius: RADIUS.md,
     },
     drawerIconBox: {
-      width: 36,
-      height: 36,
-      borderRadius: RADIUS.md,
+      width: 36, height: 36, borderRadius: RADIUS.md,
       backgroundColor: theme.brandTertiary,
-      alignItems: "center",
-      justifyContent: "center",
-      marginRight: SPACING.md,
+      alignItems: "center", justifyContent: "center", marginRight: SPACING.md,
     },
     drawerRowLabel: { fontSize: 15, color: theme.onSurface },
-    drawerVersion: {
-      fontSize: 12,
-      color: theme.muted,
-      textAlign: "center",
-      marginTop: SPACING.sm,
-    },
+    drawerVersion: { fontSize: 12, color: theme.muted, textAlign: "center", marginTop: SPACING.sm },
 
-    /* Notif panel (right side) */
     notifPanel: {
-      position: "absolute",
-      top: 0,
-      bottom: 0,
-      right: 0,
+      position: "absolute", top: 0, bottom: 0, right: 0,
       backgroundColor: theme.surfaceSecondary,
       shadowColor: "#000",
       shadowOffset: { width: -2, height: 0 },
@@ -873,50 +843,28 @@ function makeStyles(theme: Theme) {
       paddingHorizontal: SPACING.md,
     },
     notifHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      flexDirection: "row", alignItems: "center", justifyContent: "space-between",
       paddingBottom: SPACING.md,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: theme.divider,
     },
-    notifHeaderTitle: {
-      fontSize: 18,
-      fontWeight: "700",
-      color: theme.onSurface,
-    },
+    notifHeaderTitle: { fontSize: 18, fontWeight: "700", color: theme.onSurface },
     link: { fontSize: 13, fontWeight: "600" },
     notifRow: {
-      flexDirection: "row",
-      alignItems: "flex-start",
-      gap: SPACING.md,
+      flexDirection: "row", alignItems: "flex-start", gap: SPACING.md,
       paddingVertical: SPACING.md,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: theme.divider,
     },
     notifIconBox: {
-      width: 36,
-      height: 36,
-      borderRadius: RADIUS.md,
+      width: 36, height: 36, borderRadius: RADIUS.md,
       backgroundColor: theme.surfaceTertiary,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: "center", justifyContent: "center",
     },
-    notifTitle: {
-      fontSize: 14,
-      fontWeight: "600",
-      color: theme.onSurface,
-      marginBottom: 2,
-    },
+    notifTitle: { fontSize: 14, fontWeight: "600", color: theme.onSurface, marginBottom: 2 },
     notifBody: { fontSize: 12, color: theme.onSurfaceTertiary, lineHeight: 16 },
     notifTime: { fontSize: 11, color: theme.muted, marginTop: 4 },
-    unreadDot: {
-      width: 8,
-      height: 8,
-      borderRadius: 4,
-      backgroundColor: theme.brand,
-      marginTop: 6,
-    },
+    unreadDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: theme.brand, marginTop: 6 },
 
     overflowCard: {
       position: "absolute",
@@ -924,7 +872,7 @@ function makeStyles(theme: Theme) {
       backgroundColor: theme.surfaceSecondary,
       borderRadius: RADIUS.md,
       paddingVertical: SPACING.xs,
-      minWidth: 180,
+      minWidth: 200,
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.18,
@@ -934,28 +882,19 @@ function makeStyles(theme: Theme) {
       borderColor: theme.border,
     },
     overflowRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingVertical: SPACING.md,
-      paddingHorizontal: SPACING.md,
+      flexDirection: "row", alignItems: "center",
+      paddingVertical: SPACING.md, paddingHorizontal: SPACING.md,
       gap: SPACING.md,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: theme.divider,
     },
     overflowText: { fontSize: 14, color: theme.onSurface },
 
-    screenScroll: {
-      padding: SPACING.lg,
-      paddingBottom: SPACING.xxl,
-    },
+    screenScroll: { padding: SPACING.lg, paddingBottom: SPACING.xxl },
     sectionTitle: {
-      fontSize: 14,
-      fontWeight: "600",
-      color: theme.muted,
-      textTransform: "uppercase",
-      letterSpacing: 0.6,
-      marginBottom: SPACING.md,
-      marginTop: SPACING.sm,
+      fontSize: 14, fontWeight: "600", color: theme.muted,
+      textTransform: "uppercase", letterSpacing: 0.6,
+      marginBottom: SPACING.md, marginTop: SPACING.sm,
     },
 
     heroCard: {
@@ -965,26 +904,11 @@ function makeStyles(theme: Theme) {
       marginBottom: SPACING.lg,
     },
     heroEyebrow: {
-      color: "#FFFFFF",
-      opacity: 0.85,
-      fontSize: 12,
-      fontWeight: "600",
-      letterSpacing: 0.6,
-      textTransform: "uppercase",
-      marginBottom: SPACING.xs,
+      color: "#FFFFFF", opacity: 0.85, fontSize: 12, fontWeight: "600",
+      letterSpacing: 0.6, textTransform: "uppercase", marginBottom: SPACING.xs,
     },
-    heroTitle: {
-      color: "#FFFFFF",
-      fontSize: 22,
-      fontWeight: "700",
-      marginBottom: SPACING.xs,
-    },
-    heroSubtitle: {
-      color: "#FFFFFF",
-      opacity: 0.9,
-      fontSize: 13,
-      lineHeight: 18,
-    },
+    heroTitle: { color: "#FFFFFF", fontSize: 22, fontWeight: "700", marginBottom: SPACING.xs },
+    heroSubtitle: { color: "#FFFFFF", opacity: 0.9, fontSize: 13, lineHeight: 18 },
     metricsRow: { flexDirection: "row", marginBottom: SPACING.lg },
     metricCard: {
       flex: 1,
@@ -994,101 +918,99 @@ function makeStyles(theme: Theme) {
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: theme.border,
     },
-    metricLabel: {
-      fontSize: 12,
-      color: theme.muted,
-      marginBottom: SPACING.xs,
-    },
+    metricLabel: { fontSize: 12, color: theme.muted, marginBottom: SPACING.xs },
     metricValue: { fontSize: 24, fontWeight: "700", color: theme.onSurface },
     listRow: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: "row", alignItems: "center",
       backgroundColor: theme.surfaceSecondary,
       borderRadius: RADIUS.md,
-      padding: SPACING.md,
-      marginBottom: SPACING.sm,
+      padding: SPACING.md, marginBottom: SPACING.sm,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: theme.border,
     },
     listIconBox: {
-      width: 36,
-      height: 36,
-      borderRadius: RADIUS.sm,
+      width: 36, height: 36, borderRadius: RADIUS.sm,
       backgroundColor: theme.brandTertiary,
-      alignItems: "center",
-      justifyContent: "center",
-      marginRight: SPACING.md,
+      alignItems: "center", justifyContent: "center", marginRight: SPACING.md,
     },
     listTitle: { fontSize: 14, fontWeight: "600", color: theme.onSurface },
     listSubtitle: { fontSize: 12, color: theme.muted, marginTop: 2 },
 
-    taskCard: {
+    /* VMS */
+    vmsGroup: { marginBottom: SPACING.lg },
+    vmsGroupHeader: {
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: theme.surfaceSecondary,
-      borderRadius: RADIUS.md,
-      padding: SPACING.md,
-      marginBottom: SPACING.sm,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: theme.border,
-    },
-    checkbox: {
-      width: 22,
-      height: 22,
-      borderRadius: RADIUS.sm,
-      borderWidth: 2,
-      borderColor: theme.brand,
-      marginRight: SPACING.md,
-    },
-
-    analyticsCard: {
-      backgroundColor: theme.surfaceSecondary,
-      borderRadius: RADIUS.md,
-      padding: SPACING.lg,
+      gap: SPACING.sm,
       marginBottom: SPACING.md,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: theme.border,
     },
-    analyticsValue: {
-      fontSize: 28,
+    vmsGroupIcon: {
+      width: 28, height: 28, borderRadius: RADIUS.sm,
+      alignItems: "center", justifyContent: "center",
+    },
+    vmsGroupTitle: {
+      fontSize: 13,
       fontWeight: "700",
       color: theme.onSurface,
-      marginTop: SPACING.xs,
+      letterSpacing: 0.4,
+      textTransform: "uppercase",
     },
-    analyticsDelta: { fontSize: 12, color: theme.success, marginTop: 2 },
-    chartPlaceholder: {
-      marginTop: SPACING.md,
-      height: 80,
-      borderRadius: RADIUS.sm,
-      backgroundColor: theme.surfaceTertiary,
-    },
-
-    profileHeader: {
-      alignItems: "center",
-      paddingVertical: SPACING.lg,
-      marginBottom: SPACING.md,
-    },
-    avatarRingLg: {
-      width: 96,
-      height: 96,
-      borderRadius: 48,
-      backgroundColor: theme.brandTertiary,
-      alignItems: "center",
-      justifyContent: "center",
-      marginBottom: SPACING.md,
-    },
-    avatarLg: { width: 88, height: 88, borderRadius: 44 },
-    profileName: { fontSize: 18, fontWeight: "700", color: theme.onSurface },
-    profileEmail: { fontSize: 13, color: theme.muted, marginTop: 2 },
-    profileRow: {
+    vmsGrid: {
       flexDirection: "row",
-      alignItems: "center",
+      flexWrap: "wrap",
+      gap: SPACING.sm,
+    },
+    vmsTile: {
+      width: "31.5%",
+      minHeight: 92,
       backgroundColor: theme.surfaceSecondary,
       borderRadius: RADIUS.md,
       padding: SPACING.md,
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: theme.border,
+    },
+    vmsTileIcon: {
+      width: 40, height: 40, borderRadius: RADIUS.md,
+      alignItems: "center", justifyContent: "center",
+      marginBottom: SPACING.xs,
+    },
+    vmsTileLabel: {
+      fontSize: 12,
+      fontWeight: "600",
+      color: theme.onSurface,
+      textAlign: "center",
+    },
+
+    /* Chat */
+    chatRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: SPACING.md,
+      backgroundColor: theme.surfaceSecondary,
+      padding: SPACING.md,
+      borderRadius: RADIUS.md,
       marginBottom: SPACING.sm,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: theme.border,
+    },
+    chatAvatar: {
+      width: 44, height: 44, borderRadius: 22,
+      backgroundColor: theme.brandTertiary,
+      alignItems: "center", justifyContent: "center",
+    },
+    chatBadge: {
+      minWidth: 20, height: 20, paddingHorizontal: 6,
+      borderRadius: 10,
+      backgroundColor: theme.brand,
+      alignItems: "center", justifyContent: "center",
+      marginLeft: SPACING.sm,
+    },
+    chatBadgeText: {
+      color: "#FFFFFF",
+      fontSize: 11,
+      fontWeight: "700",
     },
   });
 }
