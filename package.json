@@ -1,0 +1,22 @@
+{
+  "name": "marinavex",
+  "version": "1.0.0",
+  "description": "for ship",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Anuj700077/App.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Anuj700077/App/issues"
+  },
+  "homepage": "https://github.com/Anuj700077/App#readme"
+}
