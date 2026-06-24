@@ -42,9 +42,11 @@ const SAMPLE_CARDS = [
 export function VmsPageTemplate({
   title,
   testIDPrefix,
+  onTopButtonPress,
 }: {
   title: string;
   testIDPrefix: string;
+  onTopButtonPress?: (index: number) => void;
 }) {
   const { theme } = useTheme();
   const [query, setQuery] = useState("");
@@ -62,6 +64,7 @@ export function VmsPageTemplate({
           {Array.from({ length: 5 }).map((_, i) => (
             <Pressable
               key={i}
+              onPress={() => onTopButtonPress?.(i)}
               style={({ pressed }) => [
                 styles.topBtn,
                 { backgroundColor: theme.surfaceSecondary, borderColor: theme.border },
