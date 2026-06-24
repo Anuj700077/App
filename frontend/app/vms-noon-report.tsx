@@ -18,7 +18,7 @@ import type {
   DynamicField,
   FieldValue,
 } from "@/src/components/dynamicform/dynamicform.types";
-import { SimpleTabs } from "@/src/components/simpletabs";
+import { TabPageView } from "@/src/components/simpletabs";
 import { Accordion } from "@/src/components/accordion";
 import { useTheme } from "@/src/theme/ThemeProvider";
 import { SPACING } from "@/src/theme/tokens";
@@ -193,9 +193,6 @@ function NoonReportTabsModal({
   visible: boolean;
   onClose: () => void;
 }) {
-  const { theme } = useTheme();
-  const insets = useSafeAreaInsets();
-
   const tabs = useMemo(
     () => [
       {
@@ -218,7 +215,6 @@ function NoonReportTabsModal({
         key: "cargo",
         label: "Cargo",
         icon: "cube-outline" as const,
-        badge: 3,
         content: (
           <InfoList
             rows={[
@@ -249,7 +245,6 @@ function NoonReportTabsModal({
         key: "logs",
         label: "Logs",
         icon: "list-outline" as const,
-        badge: "•",
         content: (
           <InfoList
             rows={[
@@ -267,12 +262,17 @@ function NoonReportTabsModal({
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
-      <View style={{ flex: 1, backgroundColor: theme.surface, paddingTop: insets.top }} testID="noon-report-tabs-modal">
-        <ModalHeader theme={theme} title="Noon Report — Sections" onClose={onClose} testIDPrefix="noon-report-tabs" />
-        <View style={{ flex: 1, paddingBottom: insets.bottom }}>
-          <SimpleTabs tabs={tabs} />
-        </View>
-      </View>
+      <TabPageView
+        tabs={tabs}
+        title="Noon Report"
+        onClose={onClose}
+        onSave={(key) => console.log("save", key)}
+        onSaveAndNext={(cur, next) => console.log("save-next", cur, "→", next)}
+        onSubmit={(key) => {
+          console.log("submit", key);
+          onClose();
+        }}
+      />
     </Modal>
   );
 }
