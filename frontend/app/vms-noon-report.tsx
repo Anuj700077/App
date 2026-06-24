@@ -380,7 +380,6 @@ function NoonReportAccordionModal({
         <ScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{
-            padding: SPACING.lg,
             paddingBottom: insets.bottom + SPACING.xxl,
           }}
           showsVerticalScrollIndicator={false}

@@ -97,8 +97,8 @@ function AccordionRow({
     <View
       style={[
         styles.card,
-        { backgroundColor: theme.surfaceSecondary, borderColor: theme.border },
-        open && { borderColor: theme.brand },
+        { backgroundColor: theme.surfaceSecondary, borderBottomColor: theme.border },
+        open && { borderBottomColor: theme.brand },
       ]}
       testID={`accordion-item-${item.key}`}
     >
@@ -155,9 +155,7 @@ function AccordionRow({
 
 const styles = StyleSheet.create({
   card: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 12,
-    marginBottom: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     overflow: "hidden",
   },
   header: {
